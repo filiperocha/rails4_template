@@ -3,7 +3,7 @@
 
 # clean file
 run 'rm README.rdoc'
-R
+
 # .gitignore by gibo `brew install gibo`
 run 'gibo OSX Ruby Rails JetBrains SASS > .gitignore' rescue nil
 gsub_file '.gitignore', /^config\/initializers\/secret_token.rb$/, ''
