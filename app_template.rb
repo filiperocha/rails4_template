@@ -15,9 +15,6 @@ append_file 'Gemfile', <<-CODE
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 
-# CSS Support
-gem 'sass-rails'
-
 # Form Builders
 gem 'simple_form'
 
