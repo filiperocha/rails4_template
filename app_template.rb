@@ -241,6 +241,9 @@ end
 # ----------------------------------------------------------------
 git :init
 git :add => '.'
+# hooks move to temp
+run "mv .git/hooks/pre-commit .git/hooks/pre-commit.bak"
+run "mv .git/hooks/pre-push .git/hooks/pre-push.bak"
 git :commit => "-a -m 'first commit'"
 
 # heroku deploy
@@ -296,3 +299,8 @@ if yes?('Use Heroku? [yes or ELSE]')
     gsub_file 'config/newrelic.yml', /%KEY_VALUE/, key_value
   end
 end
+
+# hooks move from temp
+run "mv .git/hooks/pre-commit.bak .git/hooks/pre-commit"
+run "mv .git/hooks/pre-push.back .git/hooks/pre-push"
+
