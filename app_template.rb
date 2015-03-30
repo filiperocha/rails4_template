@@ -3,7 +3,7 @@
 
 # clean file
 run 'rm README.rdoc'
-
+R
 # .gitignore by gibo `brew install gibo`
 run 'gibo OSX Ruby Rails JetBrains SASS > .gitignore' rescue nil
 gsub_file '.gitignore', /^config\/initializers\/secret_token.rb$/, ''
@@ -237,7 +237,7 @@ CODE
 
 run 'bundle install'
 
-run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/initializers/redis.rb -P config/initializers/'
+run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/initializers/session_store.rb -P config/initializers/'
 end
 
 # git init
