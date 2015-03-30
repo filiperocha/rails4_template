@@ -4,48 +4,25 @@
 # clean file
 run 'rm README.rdoc'
 
-# .gitignore
-run 'gibo OSX Ruby Rails JetBrains SASS SublimeText > .gitignore' rescue nil
+# .gitignore by gibo `brew install gibo`
+run 'gibo OSX Ruby Rails JetBrains SASS > .gitignore' rescue nil
 gsub_file '.gitignore', /^config\/initializers\/secret_token.rb$/, ''
 gsub_file '.gitignore', /config\/secret.yml/, ''
 
 # add to Gemfile
 append_file 'Gemfile', <<-CODE
 
-# Bootstrap & Bootswatch & font-awesome
-gem 'bootstrap-sass'
-gem 'bootswatch-rails'
-gem 'font-awesome-rails'
-
-# turbolinks support
-gem 'jquery-turbolinks'
-
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 
 # CSS Support
-gem 'less-rails'
-
-# App Server
-gem 'unicorn'
-
-# Slim
-gem 'slim-rails'
-
-# Assets log cleaner
-gem 'quiet_assets'
+gem 'sass-rails'
 
 # Form Builders
 gem 'simple_form'
 
-# # Process Management
+# Process Management
 gem 'foreman'
-
-# HTML5 Validator
-gem 'html5_validators'
-
-# PG/MySQL Log Formatter
-gem 'rails-flog'
 
 # Pagenation
 gem 'kaminari'
@@ -53,32 +30,12 @@ gem 'kaminari'
 # NewRelic
 gem 'newrelic_rpm'
 
-# Airbrake
-gem 'airbrake'
-
-# HTML Parser
-gem 'nokogiri'
-
-# Hash extensions
-gem 'hashie'
-
-# Settings
-gem 'settingslogic'
-
-# Cron Manage
-gem 'whenever', require: false
-
 # Presenter Layer Helper
 gem 'active_decorator'
 
 group :development do
-  gem 'html2slim'
-
   # N+1問題の検出
   gem 'bullet'
-
-  # Rack Profiler
-  # gem 'rack-mini-profiler'
 end
 
 group :development, :test do
@@ -112,7 +69,6 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
-  gem 'capistrano3-unicorn'
 end
 
 group :test do
@@ -145,7 +101,6 @@ application  do
     # generatorの設定
     config.generators do |g|
       g.orm :active_record
-      g.template_engine :slim
       g.test_framework  :rspec, :fixture => true
       g.fixture_replacement :factory_girl, :dir => "spec/factories"
       g.view_specs false
@@ -180,27 +135,12 @@ run 'wget https://raw.github.com/svenfuchs/rails-i18n/master/rails/locale/ja.yml
 
 # application.js(turbolink setting)
 run 'rm -rf app/assets/javascripts/application.js'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/app/assets/javascripts/application.js -P app/assets/javascripts/'
-
-# erb => slim
-run 'bundle exec erb2slim -d app/views'
-
-# Bootstrap/Bootswach/Font-Awesome
-run 'rm -rf app/assets/stylesheets/application.css'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/app/assets/stylesheets/application.css.scss -P app/assets/stylesheets/'
 
 # Simple Form
 generate 'simple_form:install --bootstrap'
 
-# Whenever
-run 'wheneverize .'
-
 # Capistrano
 run 'bundle exec cap install'
-
-# Setting Logic
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/application.yml -P config/'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/initializers/settings.rb -P config/initializers/'
 
 # Kaminari config
 generate 'kaminari:config'
@@ -208,22 +148,14 @@ generate 'kaminari:config'
 # Database
 run 'rm -rf config/database.yml'
 if yes?('Use MySQL?([yes] else PostgreSQL)')
-  run 'wget https://raw.github.com/morizyun/rails4_template/master/config/mysql/database.yml -P config/'
+  run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/mysql/database.yml -P config/'
 else
-  run 'wget https://raw.github.com/morizyun/rails4_template/master/config/postgresql/database.yml -P config/'
+  run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/postgresql/database.yml -P config/'
   run "createuser #{@app_name} -s"
 end
 
 gsub_file 'config/database.yml', /APPNAME/, @app_name
 run 'bundle exec rake RAILS_ENV=development db:create'
-
-# Unicorn(App Server)
-run 'mkdir config/unicorn'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/unicorn/development.rb -P config/unicorn/'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/unicorn/heroku.rb -P config/unicorn/'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/unicorn/production.rb -P config/unicorn/'
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/unicorn/staging.rb -P config/unicorn/'
-run "echo 'web: bundle exec unicorn -p $PORT -c ./config/unicorn/heroku.rb' > Procfile"
 
 # Rspec/Spring/Guard
 # ----------------------------------------------------------------
@@ -298,13 +230,14 @@ end
 use_redis = if yes?('Use Redis? [yes or ELSE]')
 append_file 'Gemfile', <<-CODE
 \n# Redis
-gem 'redis-objects'
-gem 'redis-namespace'
+gem 'redis'
+gem 'redis-store'
+gem 'redis-rails'
 CODE
 
 run 'bundle install'
 
-run 'wget https://raw.github.com/morizyun/rails4_template/master/config/initializers/redis.rb -P config/initializers/'
+run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/initializers/redis.rb -P config/initializers/'
 end
 
 # git init
@@ -345,7 +278,7 @@ if yes?('Use Heroku? [yes or ELSE]')
   heroku :'addons:add', 'logentries'
   heroku :'addons:add', 'scheduler'
   heroku :'addons:add', 'mongolab' if use_mongodb
-  heroku :'addons:add', 'rediscloud' if use_redis
+  heroku :'addons:add', 'redistogo' if use_redis
 
   git :push => 'heroku master'
   heroku :run, "rake db:migrate --app #{heroku_app_name}"
@@ -360,7 +293,7 @@ if yes?('Use Heroku? [yes or ELSE]')
   if yes?('Use newrelic?[yes or ELSE]')
     heroku :'addons:add', 'newrelic'
     heroku :'addons:open', 'newrelic'
-    run 'wget https://raw.github.com/morizyun/rails4_template/master/config/newrelic.yml -P config/'
+    run 'wget https://raw.github.com/ms2sato/rails4_template/master/config/newrelic.yml -P config/'
     gsub_file 'config/newrelic.yml', /%APP_NAME/, @app_name
     key_value = ask('Newrelic licence key value?')
     gsub_file 'config/newrelic.yml', /%KEY_VALUE/, key_value
