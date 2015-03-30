@@ -291,6 +291,9 @@ if yes?('Use Heroku? [yes or ELSE]')
     gsub_file 'config/newrelic.yml', /%APP_NAME/, @app_name
     key_value = ask('Newrelic licence key value?')
     gsub_file 'config/newrelic.yml', /%KEY_VALUE/, key_value
+    
+    git :add => '.'
+    git :commit => "-a -m 'add newrelic.yml'"
   end
 end
 
