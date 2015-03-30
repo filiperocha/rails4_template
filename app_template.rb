@@ -296,5 +296,5 @@ end
 
 # hooks move from temp
 run "mv .git/hooks/pre-commit.bak .git/hooks/pre-commit"
-run "mv .git/hooks/pre-push.back .git/hooks/pre-push"
+run "mv .git/hooks/pre-push.bak .git/hooks/pre-push"
 
