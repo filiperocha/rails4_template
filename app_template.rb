@@ -7,7 +7,7 @@ run 'rm README.rdoc'
 # .gitignore by gibo `brew install gibo`
 run 'gibo OSX Ruby Rails JetBrains SASS > .gitignore' rescue nil
 gsub_file '.gitignore', /^config\/initializers\/secret_token.rb$/, ''
-gsub_file '.gitignore', /config\/secret.yml/, ''
+gsub_file '.gitignore', /config\/secrets.yml/, ''
 
 # add to Gemfile
 append_file 'Gemfile', <<-CODE
